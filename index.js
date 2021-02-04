@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const validatePost = (req, res, next) => {
     const products = database.listProducts()
     if (products.find((p) => p.name == req.body.name)) {
-        res.status(400).send("name já cadastrado")
+        res.status(400).send("Produto já cadastrado.")
         return
     }
     next()
@@ -19,21 +19,21 @@ const validatePost = (req, res, next) => {
 
 // Endpoint Bem Vindo!!
 app.get('/', (req, res, next) => {
-  res.status(200).send(`Bem vindo, ${req.query.name} !!`)
+  res.status(200).send(`Bem vindo, ${req.query.name} !`)
 })
 
-// Endpoint Listar products
+// Endpoint Listar Produtos
 app.get('/products', (req, res, next) => {
     // console.log(req.query.value)
     res.status(200).send(database.listProducts(req.query.value))
 })
 
-// Endpoint Listar Um Product
+// Endpoint Listar um Produto
 app.get('/products/:id', (req, res, next) => {
     res.status(200).send(database.retriveProduct(req.params.id))
 })
 
-// Endpoint Criar Product
+// Endpoint Criar Produto
 app.post('/products', validatePost, (req, res, next) => {
     const product = database.saveProduct({
         name: req.body.name,
@@ -42,7 +42,7 @@ app.post('/products', validatePost, (req, res, next) => {
     res.status(200).send(product) // JSON
 })
 
-// Endpoint Editar Product
+// Endpoint Editar Produto
 app.put('/products/:id', (req, res, next) => {
     const product = database.saveProduct({
         name: req.body.name,
@@ -52,7 +52,7 @@ app.put('/products/:id', (req, res, next) => {
     res.status(200).send(product) // JSON
 })
 
-// Endpoint Deletar Product
+// Endpoint Deletar Produto
 app.delete('/products/:id', (req, res, next) => {
     const product = database.deleteProduct(req.params.id)
     res.status(200).send(product) // JSON
@@ -60,7 +60,7 @@ app.delete('/products/:id', (req, res, next) => {
 
 // Tratamento 404 Not Found
 app.use((req, res, next) => {
-  res.status(404).send("Página não encontrada")
+  res.status(404).send("Página não encontrada.")
 })
 
 app.listen(port, () => {
