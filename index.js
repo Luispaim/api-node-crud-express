@@ -45,9 +45,9 @@ app.post('/products', validatePost, (req, res, next) => {
 // Endpoint Editar Product
 app.put('/products/:id', (req, res, next) => {
     const product = database.saveProduct({
-        id: req.params.id,
         name: req.body.name,
-        value: req.body.value
+        value: req.body.value,
+        id: parseInt(req.params.id)
     })
     res.status(200).send(product) // JSON
 })
