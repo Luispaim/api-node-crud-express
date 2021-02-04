@@ -3,30 +3,32 @@ const sequence = {
     get id() { return this._id++ }
 }
 
-const produtos = {}
+const produtos = []
 
 function salvarProduto(produto) {
     if (!produto.id) produto.id = sequence.id
-    produtos[produto.id] = produto
+    produtos.push(produto)
     return produto
 }
 
 function getProduto(id) {
-    return produtos[id] || {}
+    const index = produtos.findIndex(p => p.id == id)
+    return produtos[index] || {}
 }
 
-function getProdutos() {
-    return Object.values(produtos)
+
+function getProdutos(valor) {
+    const filtroValor = p => p.preco == valor
+    if (valor) {
+        return Object.values(produtos.filter(filtroValor))
+    } else {
+        return Object.values(produtos)
+    }
 }
 
 function excluirProduto(id) {
-    const produto = produtos[id]
-    delete produtos[id]
-    return produto
+    const index = produtos.findIndex(p => p.id == id)
+    return produtos.splice(index, 1)
 }
 
-function getProdutosFilter(param) {
-    return Object.values(produtos.filter(param))
-}
-
-module.exports = { salvarProduto, getProduto, getProdutos, excluirProduto, getProdutosFilter }
+module.exports = { salvarProduto, getProduto, getProdutos, excluirProduto }

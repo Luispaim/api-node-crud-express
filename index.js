@@ -6,39 +6,27 @@ const bancoDeDados = require('./bancoDeDados')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
-// validação
-const validateQuery = (req, res, next) => {
-    if (req.query.nome) {
-        next()
-        return
-    }
-    res.status(400).send("Parâmetro errado")
-}
 
-// Middleware
-app.use((req, res, next) => {
+// validação
+const validatePost = (req, res, next) => {
     const produtos = bancoDeDados.getProdutos()
-    console.log(produtos)
+    // console.log(produtos)
     if (produtos.find((p) => p.nome == req.body.nome)) {
         res.status(400).send("Nome já cadastrado")
         return
     }
     next()
-})
+}
 
 // Endpoint Bem Vindo!!
-app.get('/', validateQuery, (req, res, next) => {
+app.get('/', (req, res, next) => {
   res.status(200).send(`Bem vindo, ${req.query.nome} !!`)
 })
 
 // Endpoint Listar Produtos
 app.get('/produtos', (req, res, next) => {
-    res.status(200).send(bancoDeDados.getProdutos())
-})
-
-// Endpoint Filtrar Produtos
-app.get('/produtos', validateQuery, (req, res, next) => {
-    res.status(200).send(bancoDeDados.getProdutosFilter(req.query.preco))
+    // console.log(req.query.preco)
+    res.status(200).send(bancoDeDados.getProdutos(req.query.preco))
 })
 
 // Endpoint Listar Um Produto
@@ -47,7 +35,7 @@ app.get('/produtos/:id', (req, res, next) => {
 })
 
 // Endpoint Criar Produto
-app.post('/produtos', (req, res, next) => {
+app.post('/produtos', validatePost, (req, res, next) => {
     const produto = bancoDeDados.salvarProduto({
         nome: req.body.nome,
         preco: req.body.preco
