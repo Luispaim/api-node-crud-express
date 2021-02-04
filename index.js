@@ -1,18 +1,17 @@
-const porta = 3003
+const port = 3003
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const bancoDeDados = require('./bancoDeDados')
+const database = require('./moduleDatabase')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
 // validação
 const validatePost = (req, res, next) => {
-    const produtos = bancoDeDados.getProdutos()
-    // console.log(produtos)
-    if (produtos.find((p) => p.nome == req.body.nome)) {
-        res.status(400).send("Nome já cadastrado")
+    const products = database.listProducts()
+    if (products.find((p) => p.name == req.body.name)) {
+        res.status(400).send("name já cadastrado")
         return
     }
     next()
@@ -20,43 +19,43 @@ const validatePost = (req, res, next) => {
 
 // Endpoint Bem Vindo!!
 app.get('/', (req, res, next) => {
-  res.status(200).send(`Bem vindo, ${req.query.nome} !!`)
+  res.status(200).send(`Bem vindo, ${req.query.name} !!`)
 })
 
-// Endpoint Listar Produtos
-app.get('/produtos', (req, res, next) => {
-    // console.log(req.query.preco)
-    res.status(200).send(bancoDeDados.getProdutos(req.query.preco))
+// Endpoint Listar products
+app.get('/products', (req, res, next) => {
+    // console.log(req.query.value)
+    res.status(200).send(database.listProducts(req.query.value))
 })
 
-// Endpoint Listar Um Produto
-app.get('/produtos/:id', (req, res, next) => {
-    res.status(200).send(bancoDeDados.getProduto(req.params.id))
+// Endpoint Listar Um Product
+app.get('/products/:id', (req, res, next) => {
+    res.status(200).send(database.retriveProduct(req.params.id))
 })
 
-// Endpoint Criar Produto
-app.post('/produtos', validatePost, (req, res, next) => {
-    const produto = bancoDeDados.salvarProduto({
-        nome: req.body.nome,
-        preco: req.body.preco
+// Endpoint Criar Product
+app.post('/products', validatePost, (req, res, next) => {
+    const product = database.saveProduct({
+        name: req.body.name,
+        value: req.body.value
     })
-    res.status(200).send(produto) // JSON
+    res.status(200).send(product) // JSON
 })
 
-// Endpoint Editar Produto
-app.put('/produtos/:id', (req, res, next) => {
-    const produto = bancoDeDados.salvarProduto({
+// Endpoint Editar Product
+app.put('/products/:id', (req, res, next) => {
+    const product = database.saveProduct({
         id: req.params.id,
-        nome: req.body.nome,
-        preco: req.body.preco
+        name: req.body.name,
+        value: req.body.value
     })
-    res.status(200).send(produto) // JSON
+    res.status(200).send(product) // JSON
 })
 
-// Endpoint Deletar Produto
-app.delete('/produtos/:id', (req, res, next) => {
-    const produto = bancoDeDados.excluirProduto(req.params.id)
-    res.status(200).send(produto) // JSON
+// Endpoint Deletar Product
+app.delete('/products/:id', (req, res, next) => {
+    const product = database.deleteProduct(req.params.id)
+    res.status(200).send(product) // JSON
 })
 
 // Tratamento 404 Not Found
@@ -64,6 +63,6 @@ app.use((req, res, next) => {
   res.status(404).send("Página não encontrada")
 })
 
-app.listen(porta, () => {
-    console.log(`Servidor está executando na porta ${porta}.`)
+app.listen(port, () => {
+    console.log(`Servidor está executando na porta ${port}.`)
 })
